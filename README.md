@@ -1,6 +1,7 @@
 # 🚆 Indian Railways – ETA Forecast System
 
 A passenger-focused web app that gives **dynamic, real-time Expected Time of Arrival (ETA) forecasts** for Indian Railways coaching trains — replacing the static, often-stale timetables passengers currently rely on.
+security checks runned by--Github copilot commanded by vector_one
 
 > Built for [ministry of railway] — [created by vector_one group for the smart india hackhaton]
 
@@ -128,7 +129,8 @@ all train details, chatbot helper, Prediction:
 
 ------------------------
 flowchart:
-<img width="372" height="53" alt="image" src="https://github.com/user-attachments/assets/6bf85a0a-cdb9-4df7-aae3-64aa26a4cf4b" />
+<img width="1756" height="980" alt="image" src="https://github.com/user-attachments/assets/17adb593-12b0-4696-9642-7a2979087def" />
+
 
 
 
