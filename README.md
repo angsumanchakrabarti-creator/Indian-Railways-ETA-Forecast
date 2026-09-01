@@ -2,7 +2,7 @@
 
 A passenger-focused web app that gives **dynamic, real-time Expected Time of Arrival (ETA) forecasts** for Indian Railways coaching trains — replacing the static, often-stale timetables passengers currently rely on.
 
-> Built for [Hackathon Name] — [Track/Theme, e.g. "Smart Mobility & Public Infrastructure"]
+> Built for [ministry of railway] — [created by vector_one group for the smart india hackhaton]
 
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](#) [![React](https://img.shields.io/badge/React-19-61DAFB)](#) [![TypeScript](https://img.shields.io/badge/TypeScript-Vite-3178C6)](#) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](#license)
 
@@ -112,10 +112,25 @@ npm run preview  # Preview production build
 
 ## 📄 License
 
-MIT — see [LICENSE](LICENSE) for details.
-
 ---
 
-*Built with ❤️ for [Hackathon Name] [Year].*
+sign in page:
+<img width="2560" height="1600" alt="Screenshot 2026-09-02 030319" src="https://github.com/user-attachments/assets/af3f710f-bcba-4033-b5e6-14a624cc5856" />
+
+map route ,ticket booking ,booked details:
+<img width="2560" height="1486" alt="Screenshot 2026-09-02 030348" src="https://github.com/user-attachments/assets/36b8fcf3-af1e-4264-84ae-30bdd000fe05" />
+
+coach position, checkboard, available trains details:
+<img width="2554" height="1600" alt="Screenshot 2026-09-02 030403" src="https://github.com/user-attachments/assets/aea94d02-b577-49fc-bc31-703933dd2144" />
+
+all train details, chatbot helper, Prediction:
+<img width="2560" height="1600" alt="Screenshot 2026-09-02 030412" src="https://github.com/user-attachments/assets/344189bb-5767-4062-8ed6-d5d7b26f432a" />
+
+------------------------
+flowchart:
+<img width="372" height="53" alt="image" src="https://github.com/user-attachments/assets/6bf85a0a-cdb9-4df7-aae3-64aa26a4cf4b" />
+
+
+
 
 
