@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Indian Railways ETA Forecast</title>
+    <meta
+      name="description"
+      content="Indian Railways ETA Forecast helps users track live train movements, monitor ticket status, and explore route insights within a modern railway dashboard."
+    />
+    <style>
+      :root {
+        --bg: #0b1220;
+        --bg-soft: #111b2e;
+        --panel: #14213d;
+        --panel-alt: rgba(255,255,255,0.03);
+        --primary: #2dd4bf;
+        --primary-strong: #14b8a6;
+        --accent: #60a5fa;
+        --text: #e5eefb;
+        --muted: #9db0c8;
+        --border: rgba(148,163,184,0.22);
+        --success: #34d399;
+        --warning: #fbbf24;
+        --danger: #f87171;
+        --shadow: 0 30px 60px rgba(10, 16, 28, 0.45);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        background:
+          radial-gradient(circle at top, rgba(45,212,191,0.16), transparent 25%),
+          linear-gradient(180deg, #08111d 0%, #0b1220 35%, #0d1729 100%);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      a { color: inherit; text-decoration: none; }
+      img { max-width: 100%; }
+
+      .container {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(12px);
+        background: rgba(11, 18, 32, 0.72);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 68px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: #04131a;
+        font-weight: 800;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 18px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .nav-links a:hover { color: var(--text); }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        padding: 0.9rem 1.2rem;
+        border: 1px solid transparent;
+        font-weight: 700;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .btn:hover { transform: translateY(-1px); }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+        color: #03171a;
+        box-shadow: 0 20px 30px rgba(45,212,191,0.25);
+      }
+      .btn-secondary {
+        border-color: var(--border);
+        color: var(--text);
+        background: rgba(255,255,255,0.02);
+      }
+
+      .hero {
+        padding: 80px 0 52px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 34px;
+        align-items: center;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0.45rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid rgba(45, 212, 191, 0.35);
+        background: rgba(45, 212, 191, 0.08);
+        color: var(--primary);
+        font-size: 0.75rem;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 18px 0 16px;
+        font-size: clamp(2.4rem, 4vw, 4.6rem);
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+      }
+
+      .lead {
+        max-width: 62ch;
+        color: var(--muted);
+        font-size: 1.08rem;
+      }
+
+      .hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 28px;
+      }
+
+      .mini-stats {
+        display: flex;
+        gap: 18px;
+        margin-top: 28px;
+        flex-wrap: wrap;
+      }
+
+      .mini-stat {
+        min-width: 130px;
+        padding: 14px 16px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.02);
+        border-radius: 16px;
+      }
+
+      .mini-stat strong {
+        display: block;
+        font-size: 1.4rem;
+        margin-bottom: 4px;
+      }
+
+      .mini-stat span {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .dashboard-preview {
+        position: relative;
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        padding: 16px;
+      }
+
+      .window-top {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 14px;
+      }
+
+      .dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+      }
+      .dot.red { background: var(--danger); }
+      .dot.yellow { background: var(--warning); }
+      .dot.green { background: var(--success); }
+
+      .screen {
+        background: linear-gradient(180deg, #0d1726 0%, #111d31 100%);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        overflow: hidden;
+      }
+
+      .top-strip {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .tag {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 0.35rem 0.7rem;
+        background: rgba(45, 212, 191, 0.12);
+        color: var(--primary);
+        border: 1px solid rgba(45, 212, 191, 0.25);
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .grid-cards {
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 14px;
+        padding: 18px;
+      }
+
+      .card {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .route-map {
+        height: 160px;
+        border-radius: 14px;
+        border: 1px solid rgba(96,165,250,0.2);
+        background:
+          linear-gradient(180deg, rgba(96,165,250,0.04), rgba(45,212,191,0.04)),
+          linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+          linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: auto, 28px 28px, 28px 28px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .route-map::before,
+      .route-map::after {
+        content: "";
+        position: absolute;
+        inset: 20px;
+        border: 1px solid rgba(96,165,250,0.2);
+        border-radius: 50%;
+        transform: rotate(15deg);
+      }
+
+      .route-map::after {
+        inset: 38px 30px 32px 46px;
+        border-color: rgba(45,212,191,0.25);
+      }
+
+      .train-badge {
+        position: absolute;
+        left: 38%;
+        top: 42%;
+        background: rgba(45,212,191,0.12);
+        color: var(--text);
+        border: 1px solid rgba(45,212,191,0.32);
+        border-radius: 999px;
+        padding: 0.45rem 0.8rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+
+      .stat-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .stat-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .stat-item strong {
+        color: var(--text);
+      }
+
+      .section {
+        padding: 30px 0 10px;
+      }
+
+      .section-header {
+        margin-bottom: 18px;
+      }
+
+      .section-header h2 {
+        margin: 0 0 8px;
+        font-size: clamp(1.8rem, 2.2vw, 2.5rem);
+        letter-spacing: -0.03em;
+      }
+
+      .section-header p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 62ch;
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      .feature {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 24px 20px;
+      }
+
+      .icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: rgba(96,165,250,0.12);
+        color: var(--accent);
+        border: 1px solid rgba(96,165,250,0.2);
+        margin-bottom: 16px;
+        font-weight: 800;
+      }
+
+      .feature h3 {
+        margin: 0 0 10px;
+        font-size: 1.08rem;
+      }
+
+      .feature p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        margin-top: 20px;
+      }
+
+      .panel {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 22px;
+      }
+
+      ul.checklist {
+        list-style: none;
+        padding: 0;
+        margin: 18px 0 0;
+        display: grid;
+        gap: 12px;
+      }
+
+      ul.checklist li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        color: var(--muted);
+      }
+
+      ul.checklist li::before {
+        content: "✓";
+        color: var(--success);
+        font-weight: 800;
+        margin-top: 1px;
+      }
+
+      .stack-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .stack-pill {
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.02);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+
+      .cta {
+        margin: 50px 0 80px;
+        text-align: center;
+      }
+
+      .cta-box {
+        border: 1px solid rgba(45,212,191,0.25);
+        background: linear-gradient(180deg, rgba(45,212,191,0.08), rgba(96,165,250,0.04));
+        border-radius: 22px;
+        padding: 32px 24px;
+      }
+
+      .cta-box h3 {
+        margin: 0 0 10px;
+        font-size: clamp(1.7rem, 2.2vw, 2.3rem);
+      }
+
+      .cta-box p {
+        margin: 0 auto 22px;
+        max-width: 52ch;
+        color: var(--muted);
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 22px 0 40px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      @media (max-width: 860px) {
+        .hero-grid,
+        .features,
+        .columns {
+          grid-template-columns: 1fr;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .hero {
+          padding-top: 56px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav">
+        <a href="#top" class="brand" aria-label="Indian Railways ETA Forecast home">
+          <span class="brand-mark">IR</span>
+          <span>Indian Railways ETA Forecast</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#features">Features</a>
+          <a href="#overview">Overview</a>
+          <a href="#tech">Stack</a>
+        </nav>
+
+        <a class="btn btn-secondary" href="#cta">Project Page</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            <span class="eyebrow">Live rail intelligence</span>
+            <h1>Forecast delays, track trains, and stay in control of your journey.</h1>
+            <p class="lead">
+              Indian Railways ETA Forecast brings together live train visibility, route insights,
+              booking status, and predictive journey intelligence in a single, streamlined dashboard.
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#features">Explore Features</a>
+              <a class="btn btn-secondary" href="#overview">Read Overview</a>
+            </div>
+
+            <div class="mini-stats" aria-label="Project quick stats">
+              <div class="mini-stat">
+                <strong>24/7</strong>
+                <span>Journey tracking</span>
+              </div>
+              <div class="mini-stat">
+                <strong>ETA</strong>
+                <span>Delay prediction</span>
+              </div>
+              <div class="mini-stat">
+                <strong>Live</strong>
+                <span>Coach & rail data</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-preview" aria-label="Dashboard preview image">
+            <div class="window-top">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+
+            <div class="screen">
+              <div class="top-strip">
+                <strong>Railway Insight</strong>
+                <span class="tag">Live</span>
+              </div>
+
+              <div class="grid-cards">
+                <div class="card">
+                  <div class="route-map">
+                    <span class="train-badge">12345 · Poorva Express</span>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="stat-list">
+                    <div class="stat-item"><span>ETA</span><strong>03:40</strong></div>
+                    <div class="stat-item"><span>Status</span><strong>On time</strong></div>
+                    <div class="stat-item"><span>From</span><strong>NDLS</strong></div>
+                    <div class="stat-item"><span>To</span><strong>HWH</strong></div>
+                    <div class="stat-item"><span>Coach</span><strong>S5 / 42</strong></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="section">
+        <div class="container">
+          <div class="section-header">
+            <h2>What this project does</h2>
+            <p>
+              This dashboard is designed to give passengers and planners a quick view of key railway details,
+              from train movement to route and coach information.
+            </p>
+          </div>
+
+          <div class="features">
+            <article class="feature">
+              <div class="icon">01</div>
+              <h3>ETA & time confidence</h3>
+              <p>Estimate arrival timing with journey context and status indicators for route progress.</p>
+            </article>
+
+            <article class="feature">
+              <div class="icon">02</div>
+              <h3>Train monitoring</h3>
+              <p>View selected trains, their routes, and network details in a full operational dashboard.</p>
+            </article>
+
+            <article class="feature">
+              <div class="icon">03</div>
+              <h3>Booking visibility</h3>
+              <p>Display passenger booking information and current trip context inside the app experience.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="overview" class="section">
+        <div class="container columns">
+          <div class="panel">
+            <div class="section-header">
+              <h2>Project overview</h2>
+            </div>
+            <p class="lead" style="font-size: 1rem; max-width: none;">
+              Indian Railways ETA Forecast is a front-end railway intelligence experience built to present train
+              movement data, booking state, and predicted journey insights in a clean, passenger-friendly UI.
+            </p>
+            <ul class="checklist">
+              <li>Track trains and identify route corridors</li>
+              <li>Monitor passenger booking details and train status</li>
+              <li>Explore coach, route, and ETA-related planning views</li>
+              <li>Use a dashboard-driven experience for daily rail planning</li>
+            </ul>
+          </div>
+
+          <div class="panel" id="tech">
+            <div class="section-header">
+              <h2>Built with</h2>
+            </div>
+            <div class="stack-list" aria-label="Technology stack">
+              <span class="stack-pill">React</span>
+              <span class="stack-pill">TypeScript</span>
+              <span class="stack-pill">Vite</span>
+              <span class="stack-pill">React Router</span>
+              <span class="stack-pill">Lucide Icons</span>
+              <span class="stack-pill">Tailwind CSS</span>
+            </div>
+            <p class="lead" style="font-size: 1rem; margin-top: 18px; max-width: none; color: var(--muted);">
+              The app is a modern front-end dashboard designed for quick presentation and user interaction,
+              without changing the current project source code.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="cta" class="cta">
+        <div class="container">
+          <div class="cta-box">
+            <h3>Ready to publish this project as a GitHub repo page</h3>
+            <p>
+              This landing page is GitHub Pages-friendly and can be deployed from a <code>docs/</code> folder
+              without modifying the existing app implementation.
+            </p>
+            <a class="btn btn-primary" href="../">View App</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      © 2026 Indian Railways ETA Forecast · GitHub Pages landing page
+    </footer>
+  </body>
+</html>
